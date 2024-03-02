@@ -1,7 +1,8 @@
-import { StyleSheet, View } from 'react-native'
+import { Pressable, StyleSheet, View, useColorScheme } from 'react-native'
 import React from 'react'
 import { Text } from './Themed'
 import { AntDesign } from '@expo/vector-icons';
+import { Link } from 'expo-router';
 type Coin={
     name:string,
     close:string,
@@ -11,14 +12,16 @@ type Coin={
 type CoinListItem={
     coin:Coin
 }
-const coinsList = ({coin}:CoinListItem) => {
+const coinsListItem = ({coin}:CoinListItem) => {
+  const colorScheme=useColorScheme()
   const fixPrice=(str:string,toFixed:number)=>Number(Number.parseFloat(str).toFixed(toFixed))
   const change=fixPrice(coin.percent_change,2)
   return (
-    <View style={styles.container}>
+    <Link href={`/${coin.symbol}`} asChild>
+    <Pressable style={styles.container}>
       <View style={styles.left}>
       <Text style={styles.symbol}>{coin.symbol}{"    "}
-      <AntDesign name="staro" size={24} color="black" />
+      <AntDesign name="staro" size={24} color={colorScheme==="dark"?'white':'black'} />
       </Text>
       <Text>{coin.name}</Text>
       </View>
@@ -28,11 +31,12 @@ const coinsList = ({coin}:CoinListItem) => {
       <Text style={{color:change>0?"green":'red',fontSize:18}}>
        {change>0&&"+"} {fixPrice(coin.percent_change,2)}%</Text>
       </View>
-    </View>
+    </Pressable>
+    </Link>
   )
 }
 
-export default coinsList
+export default coinsListItem
 
 const styles = StyleSheet.create({
   container:{
